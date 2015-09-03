@@ -15,9 +15,58 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yyx-fa-YQc" userLabel="Game Board View">
+                                <rect key="frame" x="145" y="240" width="310" height="310"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Score: 0" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qVF-KM-SiS">
+                                <rect key="frame" x="145" y="144" width="310" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g7m-r9-1tF" userLabel="Health 1">
+                                <rect key="frame" x="145" y="182" width="50" height="50"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qA1-f2-eec" userLabel="Health 2">
+                                <rect key="frame" x="210" y="182" width="50" height="50"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hhn-Ih-WMQ" userLabel="Health 3">
+                                <rect key="frame" x="275" y="182" width="50" height="50"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0ta-ja-7V6" userLabel="Health 5">
+                                <rect key="frame" x="405" y="182" width="50" height="50"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gQy-og-1b0" userLabel="Health 4">
+                                <rect key="frame" x="340" y="182" width="50" height="50"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="centerX" secondItem="g7m-r9-1tF" secondAttribute="centerX" constant="130" id="FyJ-ij-7Xf"/>
+                            <constraint firstAttribute="centerX" secondItem="hhn-Ih-WMQ" secondAttribute="centerX" id="Ic3-Da-0L2"/>
+                            <constraint firstAttribute="centerX" secondItem="Yyx-fa-YQc" secondAttribute="centerX" id="OeJ-Zm-jcd"/>
+                            <constraint firstAttribute="centerX" secondItem="0ta-ja-7V6" secondAttribute="centerX" constant="-130" id="UNq-Aa-fkO"/>
+                            <constraint firstAttribute="centerX" secondItem="qA1-f2-eec" secondAttribute="centerX" constant="65" id="ZU1-8b-8kb"/>
+                            <constraint firstAttribute="centerX" secondItem="qVF-KM-SiS" secondAttribute="centerX" id="haB-0L-KCX"/>
+                            <constraint firstAttribute="centerX" secondItem="gQy-og-1b0" secondAttribute="centerX" constant="-65" id="iUa-ja-Orz"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="I fucking hate you" id="SFP-ND-SpG"/>
+                    <connections>
+                        <outlet property="board_area" destination="Yyx-fa-YQc" id="MuD-9O-3gi"/>
+                        <outlet property="score_box" destination="qVF-KM-SiS" id="bpt-6X-rIB"/>
+                        <outletCollection property="health_boxes" destination="g7m-r9-1tF" id="8ud-9D-qIR"/>
+                        <outletCollection property="health_boxes" destination="qA1-f2-eec" id="M59-9h-oAv"/>
+                        <outletCollection property="health_boxes" destination="hhn-Ih-WMQ" id="Ub5-dB-w2w"/>
+                        <outletCollection property="health_boxes" destination="gQy-og-1b0" id="8ew-xi-cJd"/>
+                        <outletCollection property="health_boxes" destination="0ta-ja-7V6" id="OwZ-6t-zxC"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
