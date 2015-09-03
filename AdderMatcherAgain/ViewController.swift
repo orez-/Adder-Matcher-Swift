@@ -97,7 +97,10 @@ class ViewController: UIViewController {
     }
 
     private func dispatch_acting() {
-        self.score_box.text = "Score: \(self.game_state.score)"
+        var formatter = NSNumberFormatter()
+        formatter.numberStyle = .DecimalStyle
+        let score = formatter.stringFromNumber(Int(self.game_state.score))!
+        self.score_box.text = "Score: \(score)"
         updateHealthDisplay()
         for button in buttons {
             let coord2 = Coord(row: button.tag / SIZE, col: button.tag % SIZE)
