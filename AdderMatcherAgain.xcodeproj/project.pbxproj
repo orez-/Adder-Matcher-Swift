@@ -13,6 +13,7 @@
 		1B6324151B97D40200F16AC6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B6324141B97D40200F16AC6 /* Images.xcassets */; };
 		1B6324181B97D40200F16AC6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1B6324161B97D40200F16AC6 /* LaunchScreen.xib */; };
 		1B6324241B97D40200F16AC6 /* AdderMatcherAgainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6324231B97D40200F16AC6 /* AdderMatcherAgainTests.swift */; };
+		1B63242E1B97D42B00F16AC6 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B63242D1B97D42B00F16AC6 /* GameState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		1B63241D1B97D40200F16AC6 /* AdderMatcherAgainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdderMatcherAgainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B6324221B97D40200F16AC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B6324231B97D40200F16AC6 /* AdderMatcherAgainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdderMatcherAgainTests.swift; sourceTree = "<group>"; };
+		1B63242D1B97D42B00F16AC6 /* GameState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GameState.swift; path = ../GameState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 			children = (
 				1B63240D1B97D40200F16AC6 /* AppDelegate.swift */,
 				1B63240F1B97D40200F16AC6 /* ViewController.swift */,
+				1B63242D1B97D42B00F16AC6 /* GameState.swift */,
 				1B6324111B97D40200F16AC6 /* Main.storyboard */,
 				1B6324141B97D40200F16AC6 /* Images.xcassets */,
 				1B6324161B97D40200F16AC6 /* LaunchScreen.xib */,
@@ -212,6 +215,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B63242E1B97D42B00F16AC6 /* GameState.swift in Sources */,
 				1B6324101B97D40200F16AC6 /* ViewController.swift in Sources */,
 				1B63240E1B97D40200F16AC6 /* AppDelegate.swift in Sources */,
 			);
@@ -411,6 +415,7 @@
 				1B6324291B97D40200F16AC6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1B63242A1B97D40200F16AC6 /* Build configuration list for PBXNativeTarget "AdderMatcherAgainTests" */ = {
 			isa = XCConfigurationList;
@@ -419,6 +424,7 @@
 				1B63242C1B97D40200F16AC6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
