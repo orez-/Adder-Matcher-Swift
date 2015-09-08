@@ -58,6 +58,7 @@ class Game {
     var state:GameState
     var health:Int
     var observers:Array<GameObserver>
+    var first_collapse:Coord?
 
     init() {
         self.highest = START_MAX_VALUE
@@ -78,7 +79,12 @@ class Game {
             fall()
         case .check_collapse:
             if !collapse_one() {
-                state = .awaiting_action
+                if self.health == 0 {
+                    state = .dead
+                    score += board.reduce(0, combine: {(value, row) in row.reduce(value, combine: +)}) * 10
+                } else {
+                    state = .awaiting_action
+                }
             }
         case .awaiting_action:
             return false
@@ -94,18 +100,9 @@ class Game {
         default: return false
         }
         self.board[c.row][c.col] += 1
-        let collapse_set = self.get_matches_at(c)
         self.health -= 1
-        if collapse_set.count < MINIMUM_COLLAPSE {
-            self.highest = max(self.highest, self.board[c.row][c.col])
-            if self.health == 0 {
-                state = .dead
-                score += board.reduce(0, combine: {(value, row) in row.reduce(value, combine: +)}) * 10
-            }
-            return true
-        }
-
-        collapse(collapse_set, coord: c)
+        first_collapse = c
+        state = .check_collapse
         return true
     }
 
@@ -123,13 +120,23 @@ class Game {
     }
 
     private func collapse_one() -> Bool {
-        let matches = self.find_matches()
-        if matches == nil {return false}
-        let (r_c, collapse_set) = matches!
+        let r_c:Coord
+        let collapse_set:Set<Coord>
+        if first_collapse == nil {
+            let matches = self.find_matches()
+            if matches == nil {return false}
+            (r_c, collapse_set) = matches!
+        }
+        else {
+            r_c = first_collapse!
+            first_collapse = nil
+            let matches = self.get_matches_at(r_c)
+            if matches.count < MINIMUM_COLLAPSE {return false}
+            collapse_set = matches
+        }
         self.collapse(collapse_set, coord:r_c)
         return true
     }
-
 
     /// Find the first contiguous set of tiles whose values match in
     /// a sizeable group (as determined by MINIMUM_COLLAPSE) and return
@@ -246,4 +253,3 @@ class Game {
         state = .check_collapse
     }
 }
-

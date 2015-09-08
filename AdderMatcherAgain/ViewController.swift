@@ -9,16 +9,18 @@
 import UIKit
 
 let color_map:[(background:UIColor, text:UIColor)] = [
-    (background:UIColor.redColor(), text:UIColor.whiteColor()),
-    (background:UIColor.greenColor(), text:UIColor.blackColor()),
-    (background:UIColor.yellowColor(), text:UIColor.blackColor()),
-    (background:UIColor.blueColor(), text:UIColor.whiteColor()),
-    (background:UIColor.magentaColor(), text:UIColor.whiteColor()),
-    (background:UIColor.cyanColor(), text:UIColor.blackColor()),
-    (background:UIColor.grayColor(), text:UIColor.blackColor())
+    (background:UIColor.redColor(), text:UIColor.lightTextColor()),
+    (background:UIColor.greenColor(), text:UIColor.darkTextColor()),
+    (background:UIColor.yellowColor(), text:UIColor.darkTextColor()),
+    (background:UIColor.blueColor(), text:UIColor.lightTextColor()),
+    (background:UIColor.magentaColor(), text:UIColor.lightTextColor()),
+    (background:UIColor.cyanColor(), text:UIColor.darkTextColor()),
+    (background:UIColor.grayColor(), text:UIColor.darkTextColor()),
+    (background:UIColor.brownColor(), text:UIColor.lightTextColor()),
+    (background:UIColor.orangeColor(), text:UIColor.darkTextColor())
 ]
 
-let DELAY:Double = 0.5
+let DELAY:Double = 0.33
 
 func delay(delay:Double, closure:()->()) {
     dispatch_after(
@@ -28,7 +30,6 @@ func delay(delay:Double, closure:()->()) {
         ),
         dispatch_get_main_queue(), closure)
 }
-
 
 private func tag_to_coord(tag:Int) -> Coord {
     return Coord(row: tag / SIZE, col: tag % SIZE)
@@ -172,12 +173,12 @@ class ViewController: UIViewController, GameObserver {
         formatter.numberStyle = .DecimalStyle
         let score = formatter.stringFromNumber(Int(self.game_state.score))!
         self.score_box.text = "Score: \(score)"
-        updateHealthDisplay()
         for (id, button) in buttons {
             let coord2 = tag_to_coord(button.tag)
             updateButton(button, value: self.game_state.board[coord2.row][coord2.col])
         }
         if game_state.act() {
+            updateHealthDisplay()
             delay(DELAY, dispatch_acting)
         }
     }
@@ -185,9 +186,8 @@ class ViewController: UIViewController, GameObserver {
     @IBAction func advanceTile(sender:UIButton) {
         let coord = tag_to_coord(sender.tag)
         if self.game_state.advance_tile(coord) {
-            updateHealthDisplay()
             updateButton(buttons[coord_to_tag(coord)]!, value:game_state.board[coord.row][coord.col])
-            delay(DELAY, dispatch_acting)
+            dispatch_acting()
         }
     }
 }
