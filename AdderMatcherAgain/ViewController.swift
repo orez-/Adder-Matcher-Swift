@@ -18,6 +18,8 @@ let color_map:[(background:UIColor, text:UIColor)] = [
     (background:UIColor.grayColor(), text:UIColor.blackColor())
 ]
 
+let DELAY:Double = 0.5
+
 func delay(delay:Double, closure:()->()) {
     dispatch_after(
         dispatch_time(
@@ -28,16 +30,27 @@ func delay(delay:Double, closure:()->()) {
 }
 
 
-class ViewController: UIViewController {
+private func tag_to_coord(tag:Int) -> Coord {
+    return Coord(row: tag / SIZE, col: tag % SIZE)
+}
+
+private func coord_to_tag(coord:Coord) -> Int {
+    return coord.row * SIZE + coord.col
+}
+
+
+class ViewController: UIViewController, GameObserver {
     var game_state:Game!
     @IBOutlet var board_area:UIView!
     @IBOutlet var score_box:UITextField!
     @IBOutlet var health_boxes:[UIView]!
-    private var buttons:[UIButton] = []
+    private var buttons = [Int: UIButton]()
+    private var button_pool = Set<UIButton>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.game_state = Game()
+        game_state.observers.append(self)
 
         updateHealthDisplay()
         for (r, row) in enumerate(self.game_state.board) {
@@ -60,7 +73,7 @@ class ViewController: UIViewController {
         button.addTarget(self, action: "advanceTile:", forControlEvents: UIControlEvents.TouchUpInside)
         updateButton(button, value:value)
 
-        self.buttons.append(button)
+        self.buttons[button.tag] = button
 
         self.board_area.addSubview(button)
     }
@@ -68,7 +81,7 @@ class ViewController: UIViewController {
     private func updateButton(button:UIButton, value:UInt32) {
         let button_colors:(background:UIColor, text:UIColor)
         if value == 0 {
-            button_colors = (UIColor.whiteColor(), UIColor.whiteColor())
+            return
         }
         else {
             button_colors = color_map[(Int(value) - 1) % color_map.count]
@@ -96,25 +109,85 @@ class ViewController: UIViewController {
         }
     }
 
+    func on_collapse(collapsed: Set<Coord>, coord: Coord) {
+        let collapse_button = buttons[coord_to_tag(coord)]!
+        let dest_x = collapse_button.frame.origin.x
+        let dest_y = collapse_button.frame.origin.y
+        for button_coord in collapsed {
+            if button_coord == coord {
+                continue
+            }
+            let button = buttons[coord_to_tag(button_coord)]!
+            let start_x = button.frame.origin.x
+            let start_y = button.frame.origin.y
+            board_area.bringSubviewToFront(button)
+
+            UIView.animateWithDuration(DELAY, animations: {
+                button.frame.origin.x = dest_x
+                button.frame.origin.y = dest_y
+            })
+
+            button_pool.insert(button)
+        }
+        board_area.bringSubviewToFront(collapse_button)
+    }
+
+    func on_fall(falling_pts:[(src:Coord, dest:Coord)]) {
+        // It would be Very Bad to update the lookups on the buttons
+        // while retagging them, so we track them here and wait until
+        // after to do so.
+        var buttons_to_update = Set<UIButton>()
+        for (src, dest) in falling_pts {
+            let button:UIButton
+            if src.row < 0 {
+                // Offscreen buttons, pull from pool
+                button = button_pool.removeFirst()
+                updateButton(button, value: self.game_state.board[dest.row][dest.col])
+                button.frame.origin.x = CGFloat(src.col * 60 + 10)
+                button.frame.origin.y = CGFloat(src.row * 60 + 10)
+            }
+            else {
+                // Onscreen buttons, find the correct one
+                button = buttons[coord_to_tag(src)]!
+            }
+            buttons_to_update.insert(button)
+            UIView.animateWithDuration(DELAY, animations: {
+                button.tag = coord_to_tag(dest)
+                button.frame.origin.x = CGFloat(dest.col * 60 + 10)
+                button.frame.origin.y = CGFloat(dest.row * 60 + 10)
+            })
+        }
+        for button in buttons_to_update {
+            buttons[button.tag] = button
+        }
+
+        assert(filter(buttons) {
+            key, value in
+            key != value.tag
+        }.isEmpty)
+    }
+
     private func dispatch_acting() {
         var formatter = NSNumberFormatter()
         formatter.numberStyle = .DecimalStyle
         let score = formatter.stringFromNumber(Int(self.game_state.score))!
         self.score_box.text = "Score: \(score)"
         updateHealthDisplay()
-        for button in buttons {
-            let coord2 = Coord(row: button.tag / SIZE, col: button.tag % SIZE)
+        for (id, button) in buttons {
+            let coord2 = tag_to_coord(button.tag)
             updateButton(button, value: self.game_state.board[coord2.row][coord2.col])
         }
         if game_state.act() {
-            delay(0.5, dispatch_acting)
+            delay(DELAY, dispatch_acting)
         }
     }
 
     @IBAction func advanceTile(sender:UIButton) {
-        let coord = Coord(row: sender.tag / SIZE, col: sender.tag % SIZE)
+        let coord = tag_to_coord(sender.tag)
         if self.game_state.advance_tile(coord) {
-            dispatch_acting()
+            updateHealthDisplay()
+            updateButton(buttons[coord_to_tag(coord)]!, value:game_state.board[coord.row][coord.col])
+            delay(DELAY, dispatch_acting)
         }
     }
 }
