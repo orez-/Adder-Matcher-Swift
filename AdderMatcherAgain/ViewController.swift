@@ -68,7 +68,17 @@ class ViewController: UIViewController, GameObserver {
 
     private func addButton(value:UInt32, row:Int, col:Int) {
         let button = UIButton.buttonWithType(UIButtonType.System) as! UIButton
-        button.frame = CGRectMake(CGFloat(col * 60) + 10, CGFloat(row * 60) + 10, 50, 50)
+        button.frame = CGRectMake(CGFloat(col * 60) + 10, CGFloat((row - SIZE) * 60) + 10, 50, 50)
+        let delay_ = Double(col) * Double(SIZE - row) / (Double(SIZE) * Double(SIZE)) * DELAY
+        UIView.animateWithDuration(DELAY,
+            delay: delay_,
+            options: .CurveEaseIn,
+            animations: {
+                button.frame.origin.x = CGFloat(col * 60 + 10)
+                button.frame.origin.y = CGFloat(row * 60 + 10)
+            },
+            completion: nil
+        )
         button.tag = row * SIZE + col
         button.titleLabel!.font = UIFont(name: "Helvetica-Bold", size: 20)
         button.addTarget(self, action: "advanceTile:", forControlEvents: UIControlEvents.TouchUpInside)
@@ -108,6 +118,14 @@ class ViewController: UIViewController, GameObserver {
                 box.backgroundColor = UIColor(white: 1, alpha: 0)
             }
         }
+    }
+
+    private func updateScoreDisplay() {
+        // TODO: animation
+        var formatter = NSNumberFormatter()
+        formatter.numberStyle = .DecimalStyle
+        let score = formatter.stringFromNumber(Int(self.game_state.score))!
+        self.score_box.text = "Score: \(score)"
     }
 
     func on_collapse(collapsed: Set<Coord>, coord: Coord) {
@@ -169,10 +187,7 @@ class ViewController: UIViewController, GameObserver {
     }
 
     private func dispatch_acting() {
-        var formatter = NSNumberFormatter()
-        formatter.numberStyle = .DecimalStyle
-        let score = formatter.stringFromNumber(Int(self.game_state.score))!
-        self.score_box.text = "Score: \(score)"
+        updateScoreDisplay()
         for (id, button) in buttons {
             let coord2 = tag_to_coord(button.tag)
             updateButton(button, value: self.game_state.board[coord2.row][coord2.col])
@@ -188,6 +203,36 @@ class ViewController: UIViewController, GameObserver {
         if self.game_state.advance_tile(coord) {
             updateButton(buttons[coord_to_tag(coord)]!, value:game_state.board[coord.row][coord.col])
             dispatch_acting()
+        }
+    }
+
+    @IBAction func restart(sender:UIButton) {
+        // TODO: ensure the buttons are all assigned correctly when you tap this
+        game_state = Game()
+        game_state.observers.append(self)
+        updateScoreDisplay()
+        updateHealthDisplay()
+        for (tag, button) in buttons {
+            let coord = tag_to_coord(tag)
+            let delay_ = Double(coord.col) * Double(SIZE - coord.row) / (Double(SIZE) * Double(SIZE)) * DELAY
+
+            UIView.animateWithDuration(DELAY,
+                delay: delay_,
+                options: .CurveEaseIn,
+                animations: {
+                    button.frame.origin.x = CGFloat(coord.col * 60 + 10)
+                    button.frame.origin.y = CGFloat((coord.row + SIZE) * 60 + 10)
+                },
+                completion: {_ in
+                    self.updateButton(button, value: self.game_state.board[coord.row][coord.col])
+                    button.frame.origin.x = CGFloat(coord.col * 60 + 10)
+                    button.frame.origin.y = CGFloat((coord.row - SIZE) * 60 + 10)
+                    UIView.animateWithDuration(DELAY, animations: {
+                        button.frame.origin.x = CGFloat(coord.col * 60 + 10)
+                        button.frame.origin.y = CGFloat(coord.row * 60 + 10)
+                    })
+                }
+            )
         }
     }
 }
